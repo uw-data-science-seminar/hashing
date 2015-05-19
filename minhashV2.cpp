@@ -25,7 +25,7 @@ using namespace std;
 typedef unsigned int T;
 
 
-//median of the vector
+//median of a vector
 int median(vector<int> vec)
 {
         
@@ -57,6 +57,10 @@ class MinHash {
 
 	int numHash;
 
+	T hash(int n, T mod) {
+		return (A*n + B) % mod;
+	}
+
 public: 
 	MinHash(int num) {
 		//initializes the vector P and the coefficients 
@@ -72,20 +76,19 @@ public:
 
 	void processFirst(int n) {
 		for(auto el : P) {
-			auto intVal = (A*n+B) % el;
+			auto intVal = hash(n, el);
 			M.push_back((double) intVal/el);
 			E.push_back((int) el/intVal );
-			cout << "The estimate is " << el << "/" << intVal << "=" << (int) el/intVal << endl;
 		}
 
 	}
 
 	void process(int n) {
 		for(int i = 0; i < P.size(); i++) {
-			auto intVal = (A*n+B) % P[i];
-			double hash = (double) intVal/P[i];
-			if(hash < M[i])
-				M[i] = hash;
+			auto intVal = hash(n, P[i]);
+			double currHash = (double) intVal/P[i];
+			if(currHash < M[i])
+				M[i] = currHash;
 		}
 
 	}
@@ -112,22 +115,6 @@ public:
 
 	int estimateMedianMinhash() {
 		return 1.0/medianDouble(M);
-	}
-
-	void printEst() {
-		cout << "The sorted vector of estimates is: " << endl;
-		sort(E.begin(), E.end());
-		for (auto el : E)
-			cout << el << " ";
-		cout << endl;
-	}
-
-	void printMinHash() {
-		cout << "The sorted vector of minHashes is: " << endl;
-		sort(M.begin(), M.end());
-		for (auto el : M)
-			cout << el << " ";
-		cout << endl;
 	}
 
 };
@@ -166,12 +153,6 @@ int main(int argc, char const *argv[])
 	cout << "The first estimate is " << minnie.estimateAveMinHash() << endl;
 	cout << "The second estimate is " << minnie.estimateMedianMinhash() << endl << endl;
 	cout << "The true value is " << numDist << endl;
-
-	cout << "Problematic estimate number one (average): " << minnie.estimateAveEst() << endl;
-	cout << "Problematic estimate number two (median): " << minnie.estimateMedianEst() << endl;
-
-	
-	minnie.printEst();
 
 
 
