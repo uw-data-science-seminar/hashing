@@ -122,7 +122,7 @@ public:
 
 	}
 
-	//TODO: divide the vector P in chunks and create threads
+	//divide the vector P in chunks and create threads
 	void process(int input) {
 
 	thread** ts = new thread*[numThreads];
